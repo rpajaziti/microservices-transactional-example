@@ -1,0 +1,28 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /wallet-service/
+  tomcat:
+    connection-timeout: 10000
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5440/db_wallet
+    username: postgres
+    password: postgres
+  application:
+    name: wallet-service
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+seata:
+  enabled: true
+  application-id: wallet-service
+  tx-service-group: demo-test
+  service:
+    vgroup-mapping:
+      demo-test: default
+    grouplist:
+      default: 127.0.0.1:8088

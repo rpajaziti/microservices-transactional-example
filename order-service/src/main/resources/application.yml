@@ -1,0 +1,33 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /order-service/
+  tomcat:
+    connection-timeout: 10000
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5440/db_orders
+    username: postgres
+    password: postgres
+  application:
+    name: order-service
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+seata:
+  enabled: true
+  application-id: order-service
+  tx-service-group: demo-test
+  service:
+    vgroup-mapping:
+      demo-test: default
+    grouplist:
+      default: 127.0.0.1:8088
+
+wallet-service:
+  connectTimeout: 10000
+  readTimeout: 10000
+  endpoint: http://localhost:8082/wallet-service/api

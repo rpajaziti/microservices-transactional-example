@@ -1,0 +1,8 @@
+rootProject.name = 'thrift-seata-example'
+
+include 'common'
+include 'thrift-contract'
+include 'gateway'
+include 'order-service'
+include 'wallet-service'
+include 'inventory-service'

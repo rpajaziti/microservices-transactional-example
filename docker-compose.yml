@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:14
+    container_name: thrift-seata-postgres
+    ports:
+      - "5440:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+
+  seata-server:
+    image: seataio/seata-server:1.4.2
+    platform: linux/amd64
+    container_name: thrift-seata-server
+    ports:
+      - "8088:8088"
+    environment:
+      - STORE_MODE=file
+    command: ["--port", "8088"]
+
+volumes:
+  postgres_data:

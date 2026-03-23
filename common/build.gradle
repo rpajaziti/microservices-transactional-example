@@ -1,0 +1,38 @@
+plugins {
+    id 'maven-publish'
+}
+
+group = 'com.example.common'
+description = 'common'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'javax.servlet:javax.servlet-api:3.1.0'
+    implementation 'io.seata:seata-spring-boot-starter:1.4.2'
+    implementation 'org.apache.thrift:libthrift:0.16.0'
+}
+
+publishing {
+    publications {
+        mmavenJava(MavenPublication) {
+            from components.java
+
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

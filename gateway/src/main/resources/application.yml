@@ -1,0 +1,31 @@
+server:
+  port: 8081
+  tomcat:
+    connection-timeout: 10000
+
+spring:
+  application:
+    name: gateway
+
+seata:
+  enabled: true
+  application-id: gateway
+  tx-service-group: demo-test
+  service:
+    vgroup-mapping:
+      demo-test: default
+    grouplist:
+      default: 127.0.0.1:8088
+
+order-service:
+  endpoint: http://localhost:8084/order-service/orders
+
+wallet-service:
+  connectTimeout: 10000
+  readTimeout: 10000
+  endpoint: http://localhost:8082/wallet-service/api
+
+inventory-service:
+  connectTimeout: 10000
+  readTimeout: 10000
+  endpoint: http://localhost:8083/inventory-service/api

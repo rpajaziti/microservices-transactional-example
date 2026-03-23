@@ -1,0 +1,27 @@
+# From https://github.com/github/gitignore/blob/master/Gradle.gitignore
+.gradle
+*/build/
+.idea/
+
+# Cache of project
+.gradletasknamecache
+
+# From https://github.com/github/gitignore/blob/master/Java.gitignore
+*.class
+
+## File-based project format:
+*.iws
+
+## Plugin-specific files:
+
+# IntelliJ
+*/out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+#JPA Plugin
+.jpb/
+
+# Environment variables (contains sensitive credentials)
+.env
