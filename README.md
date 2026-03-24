@@ -15,24 +15,26 @@ The idea: when a user places an order, three things need to happen — an order 
 ## Architecture
 
 ```
-                         ┌──────────────────┐
+                         ┌───────────────────┐
                          │     Gateway       │  :8081
                          │  (REST + Thrift)  │
-                         └──┬─────┬──────┬───┘
-                  REST ↙    │     │      ↘ Thrift
-     ┌──────────────────┐   │     │   ┌───────────────────┐
+                         └───┬─────┬──────┬──┘
+                             │     │      │
+                  REST ↙     │     │      ↘ Thrift
+     ┌───────────────────┐   │     │   ┌────────────────────┐
      │  order-service    │   │     │   │ inventory-service  │  :8083
      │    (REST API)     │   │     │   │   (Thrift RPC)     │
-     │    :8084          │   │     │   └───────────────────┘
+     │    :8084          │   │     │   └────────────────────┘
      └────────┬──────────┘   │     │
+              │              │     │
               │ Thrift       │     │
               ↓              │     │
-     ┌──────────────────┐   │     │
+     ┌───────────────────┐   │     │
      │  wallet-service   │ ←─┘     │
      │   (Thrift RPC)    │  :8082  │
-     └──────────────────┘         │
-                                  │
-              Seata Server ───────┘  :8088
+     └───────────────────┘         │
+                                   │
+              Seata Server ────────┘  :8088
 ```
 
 Everything is in one Gradle project as modules, but in a real setup these would be separate microservices.
