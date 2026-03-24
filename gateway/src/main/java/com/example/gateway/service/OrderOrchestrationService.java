@@ -7,21 +7,21 @@ import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class OrderOrchestrationService {
 
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
     private final TInventoryService.Client inventoryServiceClient;
 
     @Value("${order-service.endpoint}")
     private String orderServiceEndpoint;
 
-    public OrderOrchestrationService(RestTemplate restTemplate,
+    public OrderOrchestrationService(RestClient restClient,
                                      @Qualifier("inventoryServiceClient") TInventoryService.Client inventoryServiceClient) {
-        this.restTemplate = restTemplate;
+        this.restClient = restClient;
         this.inventoryServiceClient = inventoryServiceClient;
     }
 
@@ -33,7 +33,7 @@ public class OrderOrchestrationService {
                 .queryParam("quantity", request.getQuantity())
                 .queryParam("totalAmount", request.getTotalAmount())
                 .toUriString();
-        restTemplate.postForObject(url, null, Void.class);
+        restClient.post().uri(url).retrieve().toBodilessEntity();
 
         inventoryServiceClient.decrementStock(request.getProductId(), request.getQuantity());
 

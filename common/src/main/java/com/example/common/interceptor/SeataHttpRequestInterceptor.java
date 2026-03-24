@@ -12,19 +12,16 @@ import org.springframework.http.client.support.HttpRequestWrapper;
 
 import java.io.IOException;
 
-public class SeataRestTemplateInterceptor implements ClientHttpRequestInterceptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeataRestTemplateInterceptor.class);
+public class SeataHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SeataHttpRequestInterceptor.class);
 
-    public SeataRestTemplateInterceptor() {
-    }
-
+    @Override
     public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes, ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
-        LOGGER.info("Seata RestTemplate interceptor invoked");
         HttpRequestWrapper requestWrapper = new HttpRequestWrapper(httpRequest);
         String xid = RootContext.getXID();
         if (StringUtils.isNotEmpty(xid)) {
             requestWrapper.getHeaders().add(RootContext.KEY_XID, xid);
-            LOGGER.info("Propagating global transaction XID via RestTemplate: xid={}", xid);
+            LOGGER.info("Propagating global transaction XID via HTTP: xid={}", xid);
         }
 
         return clientHttpRequestExecution.execute(requestWrapper, bytes);

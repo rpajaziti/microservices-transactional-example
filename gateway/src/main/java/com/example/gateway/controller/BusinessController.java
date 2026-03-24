@@ -9,6 +9,7 @@ import com.example.thrift.wallet.TWalletService;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import jakarta.validation.Valid;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import java.util.Map;
 public class BusinessController {
 
     private final OrderOrchestrationService orderOrchestrationService;
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
     private final TWalletService.Client walletServiceClient;
     private final TInventoryService.Client inventoryServiceClient;
 
@@ -37,11 +38,11 @@ public class BusinessController {
     private String orderServiceEndpoint;
 
     public BusinessController(OrderOrchestrationService orderOrchestrationService,
-                              RestTemplate restTemplate,
+                              RestClient restClient,
                               @Qualifier("walletServiceClient") TWalletService.Client walletServiceClient,
                               @Qualifier("inventoryServiceClient") TInventoryService.Client inventoryServiceClient) {
         this.orderOrchestrationService = orderOrchestrationService;
-        this.restTemplate = restTemplate;
+        this.restClient = restClient;
         this.walletServiceClient = walletServiceClient;
         this.inventoryServiceClient = inventoryServiceClient;
     }
@@ -56,7 +57,10 @@ public class BusinessController {
 
     @GetMapping("/orders")
     public ResponseEntity<List<?>> getOrders() {
-        List<?> orders = restTemplate.getForObject(orderServiceEndpoint, List.class);
+        List<?> orders = restClient.get()
+                .uri(orderServiceEndpoint)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
         return ResponseEntity.ok(orders);
     }
 

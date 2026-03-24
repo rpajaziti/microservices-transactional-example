@@ -89,7 +89,7 @@ This would **not** work with async communication (like Kafka events), because th
 
 For Seata to work across services, every service needs to know which global transaction it's part of. This is done by passing a transaction ID (XID) in HTTP headers.
 
-**For REST calls**, Spring gives us `ClientHttpRequestInterceptor` — we add the XID header to every outgoing `RestTemplate` call automatically. See [`SeataRestTemplateInterceptor`](common/src/main/java/com/example/common/interceptor/SeataRestTemplateInterceptor.java).
+**For REST calls**, Spring gives us `ClientHttpRequestInterceptor` — we add the XID header to every outgoing `RestClient` call automatically. See [`SeataHttpRequestInterceptor`](common/src/main/java/com/example/common/interceptor/SeataHttpRequestInterceptor.java).
 
 **For Thrift calls**, there's no such interceptor mechanism. Thrift uses its own transport layer (`THttpClient`), so Spring interceptors don't apply here. The solution: we extend `THttpClient` into [`SeataThriftHttpClient`](common/src/main/java/com/example/common/thrift/SeataThriftHttpClient.java) and override `flush()` to inject the XID header before each RPC call.
 
