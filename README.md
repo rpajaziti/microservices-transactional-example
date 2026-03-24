@@ -254,6 +254,19 @@ curl -X POST "http://localhost:8081/api/orders?simulateFail=true" \
   -d '{"userId": "user1", "productId": 1, "quantity": 2, "unitPrice": 500}'
 ```
 
+## Tested With
+
+This project has been tested and works with the following stacks:
+
+| Java | Spring Boot | Seata | Thrift Starter | Commit |
+|------|-------------|-------|----------------|--------|
+| 11 | 2.7.18 | 1.5.2 | `spring-thrift-starter:3.0.1` | [`1f2e518`](https://github.com/rpajaziti/thrift-seata-example/commit/1f2e518) |
+| 17 | 2.7.18 | 1.7.1 | `spring-thrift-starter:3.0.1` | [`3a2e19c`](https://github.com/rpajaziti/thrift-seata-example/commit/3a2e19c) |
+| 19 | 2.7.18 | 1.7.1 | `spring-thrift-starter:3.0.1` | [`534801e`](https://github.com/rpajaziti/thrift-seata-example/commit/534801e) |
+| 21 | 3.2.5 | 2.0.0 | `thrift-spring-boot-starter:2.0.1` | [`latest`](https://github.com/rpajaziti/thrift-seata-example) |
+
+> **Note:** The Thrift starter library changed on the latest version. The previous versions used [`spring-thrift-starter`](https://github.com/aatarasoff/spring-thrift-starter) (`info.developerblog.spring.thrift`), which doesn't support Spring Boot 3. The latest version switched to [`thrift-spring-boot-starter`](https://github.com/jmkeyes/thrift-spring-boot-starter) (`io.github.jmkeyes`) which supports Spring Boot 3 but requires manual servlet registration (see [Known Issue](#known-issue-manual-thrift-servlet-registration) above).
+
 ## Project Structure
 
 ```
