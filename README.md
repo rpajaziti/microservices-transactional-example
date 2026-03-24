@@ -147,7 +147,7 @@ curl -X POST http://localhost:8081/api/wallets/top-up \
 
 ### Prerequisites
 
-- Java 17+
+- Java 17
 - Docker & Docker Compose
 - Gradle
 - Apache Thrift compiler — needed to generate Java code from `.thrift` files
