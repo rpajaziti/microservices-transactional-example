@@ -1,7 +1,7 @@
 package com.example.common.interceptor;
 
 import io.seata.core.context.RootContext;
-import org.apache.commons.lang.StringUtils;
+import org.springframework.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
@@ -19,7 +19,7 @@ public class SeataHttpRequestInterceptor implements ClientHttpRequestInterceptor
     public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes, ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
         HttpRequestWrapper requestWrapper = new HttpRequestWrapper(httpRequest);
         String xid = RootContext.getXID();
-        if (StringUtils.isNotEmpty(xid)) {
+        if (StringUtils.hasText(xid)) {
             requestWrapper.getHeaders().add(RootContext.KEY_XID, xid);
             LOGGER.info("Propagating global transaction XID via HTTP: xid={}", xid);
         }

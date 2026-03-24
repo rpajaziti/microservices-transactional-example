@@ -6,7 +6,6 @@ import com.example.gateway.service.OrderOrchestrationService;
 import com.example.thrift.inventory.TInventoryService;
 import com.example.thrift.inventory.TProduct;
 import com.example.thrift.wallet.TWalletService;
-import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -49,7 +48,7 @@ public class BusinessController {
 
     @PostMapping("/orders")
     public ResponseEntity<Map<String, String>> placeOrder(@Valid @RequestBody OrderRequest request,
-                                                          @RequestParam(defaultValue = "false") boolean simulateFail) throws TException {
+                                                          @RequestParam(defaultValue = "false") boolean simulateFail) throws Exception {
         orderOrchestrationService.placeOrder(request, simulateFail);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Collections.singletonMap("message", "Order placed successfully"));
@@ -65,13 +64,13 @@ public class BusinessController {
     }
 
     @PostMapping("/wallets/top-up")
-    public ResponseEntity<Map<String, String>> topUpWallet(@Valid @RequestBody TopUpRequest request) throws TException {
+    public ResponseEntity<Map<String, String>> topUpWallet(@Valid @RequestBody TopUpRequest request) throws Exception {
         walletServiceClient.topUp(request.getUserId(), request.getAmount());
         return ResponseEntity.ok(Collections.singletonMap("message", "Wallet topped up successfully"));
     }
 
     @GetMapping("/products")
-    public ResponseEntity<List<TProduct>> getProducts() throws TException {
+    public ResponseEntity<List<TProduct>> getProducts() throws Exception {
         return ResponseEntity.ok(inventoryServiceClient.listProducts());
     }
 }

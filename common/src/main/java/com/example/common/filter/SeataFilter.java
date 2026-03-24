@@ -1,7 +1,7 @@
 package com.example.common.filter;
 
 import io.seata.core.context.RootContext;
-import org.apache.commons.lang.StringUtils;
+import org.springframework.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ public class SeataFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         String xid = req.getHeader(RootContext.KEY_XID.toLowerCase());
         boolean isBind = false;
-        if (StringUtils.isNotBlank(xid)) {
+        if (StringUtils.hasText(xid)) {
             LOGGER.info("Binding incoming global transaction: xid={}", xid);
             RootContext.bind(xid);
             isBind = true;
