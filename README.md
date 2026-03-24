@@ -175,26 +175,6 @@ Start all four in separate terminals:
 ./gradlew :gateway:bootRun
 ```
 
-### 5. Try it out
-
-```bash
-# Top up a wallet first
-curl -X POST http://localhost:8081/api/wallets/top-up \
-  -H "Content-Type: application/json" \
-  -d '{"userId": "user1", "amount": 5000}'
-
-# Check products (seeded by Flyway: Laptop, Phone, Headphones)
-curl http://localhost:8081/api/products
-
-# Place an order
-curl -X POST http://localhost:8081/api/orders \
-  -H "Content-Type: application/json" \
-  -d '{"userId": "user1", "productId": 1, "quantity": 1, "unitPrice": 1000}'
-
-# Check orders
-curl http://localhost:8081/api/orders
-```
-
 ## API Endpoints (Gateway :8081)
 
 | Method | Endpoint | Description |
@@ -206,9 +186,9 @@ curl http://localhost:8081/api/orders
 
 Swagger UI is available at `http://localhost:8081/swagger-ui.html`
 
-### Example: top up a wallet
+### Top up a wallet
 
-Top up a wallet first — placing an order will fail if the user has no wallet with sufficient balance.
+You need to top up a wallet before placing an order — otherwise the order will fail because the user has no balance.
 
 ```bash
 curl -X POST http://localhost:8081/api/wallets/top-up \
@@ -216,7 +196,17 @@ curl -X POST http://localhost:8081/api/wallets/top-up \
   -d '{"userId": "user1", "amount": 5000}'
 ```
 
-### Example: place an order
+### Check available products
+
+Products are seeded by Flyway (Laptop, Phone, Headphones). Use this to see product IDs and stock before placing an order.
+
+```bash
+curl http://localhost:8081/api/products
+```
+
+### Place an order
+
+This creates an order, charges the user's wallet, and decrements product stock — all within a single Seata global transaction.
 
 ```bash
 curl -X POST http://localhost:8081/api/orders \
@@ -224,15 +214,21 @@ curl -X POST http://localhost:8081/api/orders \
   -d '{"userId": "user1", "productId": 1, "quantity": 2, "unitPrice": 500}'
 ```
 
-### Example: simulate a failure (to see Seata rollback)
+### List all orders
+
+```bash
+curl http://localhost:8081/api/orders
+```
+
+### Simulate a failure (to see Seata rollback)
+
+This places an order normally, then throws an exception at the end. Seata detects the failure and rolls back all three databases (order, wallet, inventory) using the `undo_log` snapshots.
 
 ```bash
 curl -X POST "http://localhost:8081/api/orders?simulateFail=true" \
   -H "Content-Type: application/json" \
   -d '{"userId": "user1", "productId": 1, "quantity": 2, "unitPrice": 500}'
 ```
-
-All three operations (order, wallet, inventory) will go through, then the simulated failure triggers Seata to roll back everything.
 
 ## Project Structure
 
