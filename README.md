@@ -59,7 +59,36 @@ Everything is in one Gradle project as modules, but in a real setup these would 
 4. Gateway calls inventory-service (Thrift) → decrements stock
 5. If anything fails at any point, Seata rolls back all three databases automatically
 
-The transaction ID (XID) is passed between services automatically — via a REST interceptor for HTTP calls and a custom `SeataThriftHttpClient` for Thrift calls.
+```
+  ✅ Success                                    ❌ Failure (simulateFail=true)
+
+  POST /api/orders                              POST /api/orders?simulateFail=true
+       │                                             │
+       ▼                                             ▼
+  @GlobalTransactional                          @GlobalTransactional
+       │                                             │
+       ├─→ order-service     ✅ saved                ├─→ order-service     ✅ saved
+       │     └─→ wallet      ✅ deducted             │     └─→ wallet      ✅ deducted
+       │                                             │
+       ├─→ inventory         ✅ decremented          ├─→ inventory         ✅ decremented
+       │                                             │
+       ▼                                             ▼
+  COMMIT all                                    RuntimeException thrown!
+                                                     │
+                                                     ▼
+                                                ROLLBACK all ↩️
+                                                (order, wallet, inventory)
+```
+
+## XID Propagation — how Seata knows it's the same transaction
+
+For Seata to work across services, every service needs to know which global transaction it's part of. This is done by passing a transaction ID (XID) in HTTP headers.
+
+**For REST calls**, Spring gives us `ClientHttpRequestInterceptor` — we add the XID header to every outgoing `RestTemplate` call automatically. See [`SeataRestTemplateInterceptor`](common/src/main/java/com/example/common/interceptor/SeataRestTemplateInterceptor.java).
+
+**For Thrift calls**, there's no such interceptor mechanism. Thrift uses its own transport layer (`THttpClient`), so Spring interceptors don't apply here. The solution: we extend `THttpClient` into [`SeataThriftHttpClient`](common/src/main/java/com/example/common/thrift/SeataThriftHttpClient.java) and override `flush()` to inject the XID header before each RPC call.
+
+**On the receiving side**, a servlet [`SeataFilter`](common/src/main/java/com/example/common/filter/SeataFilter.java) picks up the XID from incoming request headers and binds it to Seata's `RootContext`. This works for both REST and Thrift since both come in as HTTP requests.
 
 ## API Endpoints (Gateway :8081)
 
