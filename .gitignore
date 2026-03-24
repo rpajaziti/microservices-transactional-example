@@ -25,3 +25,6 @@
 
 # Environment variables (contains sensitive credentials)
 .env
+
+# Local Gradle settings
+gradle.properties
