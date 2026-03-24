@@ -95,6 +95,30 @@ For Seata to work across services, every service needs to know which global tran
 
 **On the receiving side**, a servlet [`SeataFilter`](common/src/main/java/com/example/common/filter/SeataFilter.java) picks up the XID from incoming request headers and binds it to Seata's `RootContext`. This works for both REST and Thrift since both come in as HTTP requests.
 
+## The `undo_log` table
+
+Every service database (`db_orders`, `db_wallet`, `db_inventory`) contains an `undo_log` table. This is required by Seata's AT mode.
+
+When a service executes SQL within a global transaction, Seata's datasource proxy automatically captures a **before-image** and **after-image** of the affected rows and stores them in `undo_log`. If the global transaction needs to roll back, Seata reads these snapshots and generates reverse SQL to restore the data to its original state — no manual compensation code needed.
+
+The table is created via Flyway migration in each service and has a fixed schema defined by Seata:
+
+```sql
+CREATE TABLE IF NOT EXISTS undo_log (
+    id            BIGSERIAL    PRIMARY KEY,
+    branch_id     BIGINT       NOT NULL,
+    xid           VARCHAR(128) NOT NULL,
+    context       VARCHAR(128) NOT NULL,
+    rollback_info BYTEA        NOT NULL,
+    log_status    INT          NOT NULL,
+    log_created   TIMESTAMP(0) NOT NULL,
+    log_modified  TIMESTAMP(0) NOT NULL,
+    CONSTRAINT ux_undo_log UNIQUE (branch_id, xid)
+);
+```
+
+On successful commit, Seata cleans up the `undo_log` entries asynchronously. On rollback, it uses them to revert changes, then deletes them.
+
 ## API Endpoints (Gateway :8081)
 
 | Method | Endpoint | Description |
