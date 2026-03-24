@@ -1,12 +1,13 @@
 package com.example.inventoryservice.service;
 
+import com.example.common.exception.InsufficientStockException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.inventoryservice.entity.Product;
 import com.example.inventoryservice.repository.ProductRepository;
 import com.example.thrift.inventory.TProduct;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class InventoryService {
@@ -19,10 +20,10 @@ public class InventoryService {
 
     public void decrementStock(long productId, int quantity) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + productId));
 
         if (product.getStock() < quantity) {
-            throw new RuntimeException("Insufficient stock for product: " + productId);
+            throw new InsufficientStockException("Insufficient stock for product: " + productId);
         }
 
         product.setStock(product.getStock() - quantity);
@@ -32,6 +33,6 @@ public class InventoryService {
     public List<TProduct> listProducts() {
         return productRepository.findAll().stream()
                 .map(p -> new TProduct(p.getId(), p.getProductName(), p.getStock()))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

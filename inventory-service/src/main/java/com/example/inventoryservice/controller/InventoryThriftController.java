@@ -17,11 +17,19 @@ public class InventoryThriftController implements TInventoryService.Iface {
 
     @Override
     public void decrementStock(long productId, int quantity) throws TException {
-        inventoryService.decrementStock(productId, quantity);
+        try {
+            inventoryService.decrementStock(productId, quantity);
+        } catch (RuntimeException e) {
+            throw new TException(e.getMessage(), e);
+        }
     }
 
     @Override
     public List<TProduct> listProducts() throws TException {
-        return inventoryService.listProducts();
+        try {
+            return inventoryService.listProducts();
+        } catch (RuntimeException e) {
+            throw new TException(e.getMessage(), e);
+        }
     }
 }

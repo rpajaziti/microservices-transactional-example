@@ -1,5 +1,7 @@
 package com.example.walletservice.service;
 
+import com.example.common.exception.InsufficientBalanceException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.walletservice.entity.Wallet;
 import com.example.walletservice.repository.WalletRepository;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,10 @@ public class WalletService {
 
     public void deductBalance(String userId, int amount) {
         Wallet wallet = walletRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Wallet not found for user: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for user: " + userId));
 
         if (wallet.getBalance() < amount) {
-            throw new RuntimeException("Insufficient balance for user: " + userId);
+            throw new InsufficientBalanceException("Insufficient balance for user: " + userId);
         }
 
         wallet.setBalance(wallet.getBalance() - amount);

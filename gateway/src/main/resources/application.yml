@@ -18,7 +18,7 @@ seata:
       default: 127.0.0.1:8088
 
 order-service:
-  endpoint: http://localhost:8084/order-service/orders
+  base-url: http://localhost:8084/order-service
 
 wallet-service:
   connectTimeout: 10000

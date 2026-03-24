@@ -1,5 +1,6 @@
 package com.example.gateway.controller;
 
+import com.example.gateway.client.OrderServiceClient;
 import com.example.gateway.dto.OrderRequest;
 import com.example.gateway.dto.TopUpRequest;
 import com.example.gateway.service.OrderOrchestrationService;
@@ -7,8 +8,6 @@ import com.example.thrift.inventory.TInventoryService;
 import com.example.thrift.inventory.TProduct;
 import com.example.thrift.wallet.TWalletService;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClient;
 
 import jakarta.validation.Valid;
 import java.util.Collections;
@@ -29,19 +27,16 @@ import java.util.Map;
 public class BusinessController {
 
     private final OrderOrchestrationService orderOrchestrationService;
-    private final RestClient restClient;
+    private final OrderServiceClient orderServiceClient;
     private final TWalletService.Client walletServiceClient;
     private final TInventoryService.Client inventoryServiceClient;
 
-    @Value("${order-service.endpoint}")
-    private String orderServiceEndpoint;
-
     public BusinessController(OrderOrchestrationService orderOrchestrationService,
-                              RestClient restClient,
+                              OrderServiceClient orderServiceClient,
                               @Qualifier("walletServiceClient") TWalletService.Client walletServiceClient,
                               @Qualifier("inventoryServiceClient") TInventoryService.Client inventoryServiceClient) {
         this.orderOrchestrationService = orderOrchestrationService;
-        this.restClient = restClient;
+        this.orderServiceClient = orderServiceClient;
         this.walletServiceClient = walletServiceClient;
         this.inventoryServiceClient = inventoryServiceClient;
     }
@@ -56,11 +51,7 @@ public class BusinessController {
 
     @GetMapping("/orders")
     public ResponseEntity<List<?>> getOrders() {
-        List<?> orders = restClient.get()
-                .uri(orderServiceEndpoint)
-                .retrieve()
-                .body(new ParameterizedTypeReference<>() {});
-        return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(orderServiceClient.getAllOrders());
     }
 
     @PostMapping("/wallets/top-up")

@@ -14,11 +14,19 @@ public class WalletThriftController implements TWalletService.Iface {
 
     @Override
     public void deductBalance(String userId, int amount) throws TException {
-        walletService.deductBalance(userId, amount);
+        try {
+            walletService.deductBalance(userId, amount);
+        } catch (RuntimeException e) {
+            throw new TException(e.getMessage(), e);
+        }
     }
 
     @Override
     public void topUp(String userId, int amount) throws TException {
-        walletService.topUp(userId, amount);
+        try {
+            walletService.topUp(userId, amount);
+        } catch (RuntimeException e) {
+            throw new TException(e.getMessage(), e);
+        }
     }
 }
