@@ -6,6 +6,9 @@ server:
     connection-timeout: 10000
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   datasource:
     url: jdbc:postgresql://localhost:5440/db_wallet
     username: postgres

@@ -4,6 +4,9 @@ server:
     connection-timeout: 10000
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   application:
     name: gateway
   cloud:
