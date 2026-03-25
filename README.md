@@ -137,6 +137,16 @@ CREATE TABLE IF NOT EXISTS undo_log (
 
 On successful commit, Seata cleans up `undo_log` entries asynchronously. On rollback it uses them to revert changes and then deletes them.
 
+## Virtual Threads
+
+All services run with `spring.threads.virtual.enabled=true` (Java 21).
+
+Each request in this project spends most of its time **waiting** — for Postgres, for Thrift responses, for REST calls. Without virtual threads, each blocked request holds an OS thread (~1MB, limited pool). Under load you hit the limit and requests queue up.
+
+With virtual threads, a blocked thread is parked and the OS thread is freed immediately. You can handle far more concurrent requests on the same hardware with no code changes.
+
+**When it doesn't help:** CPU-bound work — heavy computation, image processing, encryption. There you're burning CPU, not waiting, so parking threads does nothing. Standard I/O-heavy microservices like these are the ideal use case.
+
 ## Tech Stack
 
 | |                       |
