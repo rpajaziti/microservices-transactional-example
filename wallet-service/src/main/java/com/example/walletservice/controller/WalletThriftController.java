@@ -5,8 +5,10 @@ import com.example.common.exception.ResourceNotFoundException;
 import com.example.walletservice.service.WalletService;
 import com.example.thrift.wallet.TWalletException;
 import com.example.thrift.wallet.TWalletService;
+import ru.trylogic.spring.boot.thrift.annotation.ThriftController;
 import org.apache.thrift.TException;
 
+@ThriftController("/api")
 public class WalletThriftController implements TWalletService.Iface {
 
     private final WalletService walletService;

@@ -10,6 +10,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'io.seata:seata-spring-boot-starter:2.0.0'
     implementation 'org.apache.thrift:libthrift:0.22.0'
+    compileOnly('info.developerblog.spring.thrift:spring-thrift-autoconfigure:4.0.0') { transitive = false }
 }
 
 publishing {

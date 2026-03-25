@@ -7,7 +7,7 @@ import com.example.gateway.service.OrderOrchestrationService;
 import com.example.thrift.inventory.TInventoryService;
 import com.example.thrift.inventory.TProduct;
 import com.example.thrift.wallet.TWalletService;
-import org.springframework.beans.factory.annotation.Qualifier;
+import info.developerblog.spring.thrift.annotation.ThriftClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,19 +26,19 @@ import java.util.Map;
 @RequestMapping("/api")
 public class BusinessController {
 
+    @ThriftClient(serviceId = "wallet-service")
+    private TWalletService.Client walletServiceClient;
+
+    @ThriftClient(serviceId = "inventory-service")
+    private TInventoryService.Client inventoryServiceClient;
+
     private final OrderOrchestrationService orderOrchestrationService;
     private final OrderServiceClient orderServiceClient;
-    private final TWalletService.Client walletServiceClient;
-    private final TInventoryService.Client inventoryServiceClient;
 
     public BusinessController(OrderOrchestrationService orderOrchestrationService,
-                              OrderServiceClient orderServiceClient,
-                              @Qualifier("walletServiceClient") TWalletService.Client walletServiceClient,
-                              @Qualifier("inventoryServiceClient") TInventoryService.Client inventoryServiceClient) {
+                              OrderServiceClient orderServiceClient) {
         this.orderOrchestrationService = orderOrchestrationService;
         this.orderServiceClient = orderServiceClient;
-        this.walletServiceClient = walletServiceClient;
-        this.inventoryServiceClient = inventoryServiceClient;
     }
 
     @PostMapping("/orders")

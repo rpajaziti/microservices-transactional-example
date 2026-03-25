@@ -8,5 +8,5 @@ dependencies {
     implementation "io.seata:seata-spring-boot-starter:2.0.0"
     implementation project(':common')
     implementation project(':thrift-contract')
-    implementation 'org.apache.thrift:libthrift:0.22.0'
+    implementation 'info.developerblog.spring.thrift:spring-thrift-starter:4.0.0'
 }

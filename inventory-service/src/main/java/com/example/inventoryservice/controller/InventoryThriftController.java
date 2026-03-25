@@ -6,10 +6,12 @@ import com.example.inventoryservice.service.InventoryService;
 import com.example.thrift.inventory.TInventoryException;
 import com.example.thrift.inventory.TInventoryService;
 import com.example.thrift.inventory.TProduct;
+import ru.trylogic.spring.boot.thrift.annotation.ThriftController;
 import org.apache.thrift.TException;
 
 import java.util.List;
 
+@ThriftController("/api")
 public class InventoryThriftController implements TInventoryService.Iface {
 
     private final InventoryService inventoryService;
@@ -19,7 +21,7 @@ public class InventoryThriftController implements TInventoryService.Iface {
     }
 
     @Override
-    public void decrementStock(long productId, int quantity) throws TInventoryException, TException {
+    public void decrementStock(long productId, int quantity) throws TException {
         try {
             inventoryService.decrementStock(productId, quantity);
         } catch (ResourceNotFoundException e) {

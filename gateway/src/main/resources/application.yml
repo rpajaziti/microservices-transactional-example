@@ -6,6 +6,15 @@ server:
 spring:
   application:
     name: gateway
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            wallet-service:
+              - uri: http://localhost:8082
+            inventory-service:
+              - uri: http://localhost:8083
 
 seata:
   enabled: true
@@ -23,9 +32,9 @@ order-service:
 wallet-service:
   connectTimeout: 10000
   readTimeout: 10000
-  endpoint: http://localhost:8082/wallet-service/api
+  path: /wallet-service/api
 
 inventory-service:
   connectTimeout: 10000
   readTimeout: 10000
-  endpoint: http://localhost:8083/inventory-service/api
+  path: /inventory-service/api

@@ -12,6 +12,13 @@ spring:
     password: postgres
   application:
     name: order-service
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            wallet-service:
+              - uri: http://localhost:8082
   jpa:
     hibernate:
       ddl-auto: none
@@ -30,4 +37,4 @@ seata:
 wallet-service:
   connectTimeout: 10000
   readTimeout: 10000
-  endpoint: http://localhost:8082/wallet-service/api
+  path: /wallet-service/api

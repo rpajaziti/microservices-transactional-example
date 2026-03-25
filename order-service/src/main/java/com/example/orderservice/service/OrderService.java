@@ -3,8 +3,8 @@ package com.example.orderservice.service;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.repository.OrderRepository;
 import com.example.thrift.wallet.TWalletService;
+import info.developerblog.spring.thrift.annotation.ThriftClient;
 import org.apache.thrift.TException;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,13 +13,13 @@ import java.util.List;
 @Service
 public class OrderService {
 
-    private final OrderRepository orderRepository;
-    private final TWalletService.Client walletServiceClient;
+    @ThriftClient(serviceId = "wallet-service")
+    private TWalletService.Client walletServiceClient;
 
-    public OrderService(OrderRepository orderRepository,
-                        @Qualifier("walletServiceClient") TWalletService.Client walletServiceClient) {
+    private final OrderRepository orderRepository;
+
+    public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
-        this.walletServiceClient = walletServiceClient;
     }
 
     public List<Order> getAllOrders() {

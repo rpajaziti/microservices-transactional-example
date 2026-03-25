@@ -21,7 +21,7 @@ subprojects {
         mavenCentral()
         mavenLocal()
         maven {
-            url = uri("https://maven.pkg.github.com/aatarasoff/spring-thrift-starter")
+            url = uri("https://maven.pkg.github.com/rpajaziti/spring-thrift-starter")
             credentials {
                 username = System.getenv("USERNAME")
                 password = System.getenv("TOKEN")
