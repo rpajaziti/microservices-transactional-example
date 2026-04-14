@@ -1,4 +1,4 @@
-# Seata + Thrift E-Commerce Demo
+# Distributed Transactions with Seata — Thrift RPC + REST Gateway
 
 > Distributed transactions across Spring Boot microservices — Apache Thrift RPC + REST gateway with Seata AT mode
 
